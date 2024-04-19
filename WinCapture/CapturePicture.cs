@@ -97,7 +97,7 @@ namespace WinCapture
         /// <param name="hwnd">窗口句柄</param>
         /// <param name="bitmapInfo">位图结构体</param>
         /// <returns>窗口信息获取是否成功</returns>
-        public bool GetDCBitmap(IntPtr hwnd, Win32Types.BitmapInfo bitmapInfo, int mode = 0)
+        public bool GetDCBitmap(IntPtr hwnd, Win32Types.BitmapInfo bitmapInfo, int mode = 0, int xOffset = 0, int yoffset = 0)
         {
             if (mode == 0)
             {
@@ -120,7 +120,7 @@ namespace WinCapture
             //将设备图像指定到位图中
             preBitmap = Win32.SelectObject(memoryDc, bitmap);
             //将源中的位块指定到内存设备DC中
-            return Win32.BitBlt(memoryDc, 0, 0, width, height, windowDc, 0, 0,
+            return Win32.BitBlt(memoryDc, xOffset, yoffset, width - xOffset, height - yoffset, windowDc, 0, 0,
                 (uint)Win32Const.RasterOperationMode.SRCCOPY);
         }
         #endregion
@@ -139,7 +139,7 @@ namespace WinCapture
             task.Start();
         }
 
-        public async Task Capturing(IntPtr hwnd, int fps)
+        public async Task Capturing(IntPtr hwnd, int fps, int xOffset = 0, int yoffset = 0)
         {
             IsRun = true;
             CreateDC(hwnd);
@@ -147,7 +147,7 @@ namespace WinCapture
             Win32Types.BitmapInfo bitmapInfo = new() { bmiHeader = new Win32Types.BitmapInfoHeader() };
             while (IsRun)
             {
-                if (GetDCBitmap(hwnd, bitmapInfo))
+                if (GetDCBitmap(hwnd, bitmapInfo, 0, xOffset, yoffset))
                 {
                     if (fps <= 0 || fps > 1000)
                         Thread.Sleep(40);
@@ -184,10 +184,10 @@ namespace WinCapture
             Cv2.DestroyAllWindows();
         }
 
-        public void CaptureStart(IntPtr hwnd, int fps = 25)
+        public void CaptureStart(IntPtr hwnd, int fps = 25, int xOffset = 0, int yoffset = 0)
         {
             IsRun = false;
-            StartTask(capturing, async () => await Capturing(hwnd, fps));
+            StartTask(capturing, async () => await Capturing(hwnd, fps, xOffset, yoffset));
         }
 
         public void ShowCpaturedStart(string windowName, int delay = 20)

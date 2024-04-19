@@ -45,7 +45,7 @@
             MS菜单.Name = "MS菜单";
             MS菜单.Size = new Size(784, 25);
             MS菜单.TabIndex = 5;
-            MS菜单.Text = "menuStrip1";
+            MS菜单.Text = "菜单";
             // 
             // TSM添加
             // 
@@ -64,21 +64,21 @@
             // TSM水平
             // 
             TSM水平.Name = "TSM水平";
-            TSM水平.Size = new Size(100, 22);
+            TSM水平.Size = new Size(180, 22);
             TSM水平.Text = "水平";
             TSM水平.Click += TSM水平_Click;
             // 
             // TSM垂直
             // 
             TSM垂直.Name = "TSM垂直";
-            TSM垂直.Size = new Size(100, 22);
+            TSM垂直.Size = new Size(180, 22);
             TSM垂直.Text = "垂直";
             TSM垂直.Click += TSM垂直_Click;
             // 
             // TSM层叠
             // 
             TSM层叠.Name = "TSM层叠";
-            TSM层叠.Size = new Size(100, 22);
+            TSM层叠.Size = new Size(180, 22);
             TSM层叠.Text = "层叠";
             TSM层叠.Click += TSM层叠_Click;
             // 

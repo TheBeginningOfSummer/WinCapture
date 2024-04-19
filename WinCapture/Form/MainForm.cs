@@ -9,6 +9,7 @@ namespace WinCapture
         public MainForm()
         {
             InitializeComponent();
+            MS²Ëµ¥.Items.Add(new ToolStripSeparator());
         }
 
         private void TSMÌí¼Ó_Click(object sender, EventArgs e)

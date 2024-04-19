@@ -37,7 +37,6 @@
             TSM停止 = new ToolStripMenuItem();
             TSM显示 = new ToolStripMenuItem();
             TSM显示当前捕捉 = new ToolStripMenuItem();
-            TSM关闭当前捕捉 = new ToolStripMenuItem();
             TSM设置 = new ToolStripMenuItem();
             TSM窗口设置 = new ToolStripMenuItem();
             TSTX偏移 = new ToolStripTextBox();
@@ -47,7 +46,7 @@
             // 
             // BTN复制句柄
             // 
-            BTN复制句柄.Location = new Point(169, 38);
+            BTN复制句柄.Location = new Point(169, 28);
             BTN复制句柄.Name = "BTN复制句柄";
             BTN复制句柄.Size = new Size(60, 23);
             BTN复制句柄.TabIndex = 8;
@@ -58,7 +57,7 @@
             // LB句柄
             // 
             LB句柄.AutoSize = true;
-            LB句柄.Location = new Point(54, 41);
+            LB句柄.Location = new Point(54, 31);
             LB句柄.Name = "LB句柄";
             LB句柄.Size = new Size(32, 17);
             LB句柄.TabIndex = 7;
@@ -71,7 +70,7 @@
             BTN句柄.FlatAppearance.MouseOverBackColor = Color.LightGray;
             BTN句柄.FlatStyle = FlatStyle.Flat;
             BTN句柄.Font = new Font("Microsoft YaHei UI", 5F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            BTN句柄.Location = new Point(10, 36);
+            BTN句柄.Location = new Point(10, 26);
             BTN句柄.Margin = new Padding(1);
             BTN句柄.Name = "BTN句柄";
             BTN句柄.Padding = new Padding(1);
@@ -116,7 +115,7 @@
             // 
             // TSM显示
             // 
-            TSM显示.DropDownItems.AddRange(new ToolStripItem[] { TSM显示当前捕捉, TSM关闭当前捕捉 });
+            TSM显示.DropDownItems.AddRange(new ToolStripItem[] { TSM显示当前捕捉 });
             TSM显示.Name = "TSM显示";
             TSM显示.Size = new Size(44, 21);
             TSM显示.Text = "显示";
@@ -125,15 +124,8 @@
             // 
             TSM显示当前捕捉.Name = "TSM显示当前捕捉";
             TSM显示当前捕捉.Size = new Size(148, 22);
-            TSM显示当前捕捉.Text = "显示当前捕捉";
+            TSM显示当前捕捉.Text = "显示捕捉窗口";
             TSM显示当前捕捉.Click += TSM显示当前捕捉_Click;
-            // 
-            // TSM关闭当前捕捉
-            // 
-            TSM关闭当前捕捉.Name = "TSM关闭当前捕捉";
-            TSM关闭当前捕捉.Size = new Size(148, 22);
-            TSM关闭当前捕捉.Text = "关闭当前捕捉";
-            TSM关闭当前捕捉.Click += TSM关闭当前捕捉_Click;
             // 
             // TSM设置
             // 
@@ -146,19 +138,22 @@
             // 
             TSM窗口设置.DropDownItems.AddRange(new ToolStripItem[] { TSTX偏移, TSTY偏移 });
             TSM窗口设置.Name = "TSM窗口设置";
-            TSM窗口设置.Size = new Size(124, 22);
+            TSM窗口设置.Size = new Size(180, 22);
             TSM窗口设置.Text = "窗口设置";
+            TSM窗口设置.Click += TSM窗口设置_Click;
             // 
             // TSTX偏移
             // 
             TSTX偏移.Name = "TSTX偏移";
             TSTX偏移.Size = new Size(100, 23);
+            TSTX偏移.Text = "-8";
             TSTX偏移.ToolTipText = "X偏移";
             // 
             // TSTY偏移
             // 
             TSTY偏移.Name = "TSTY偏移";
             TSTY偏移.Size = new Size(100, 23);
+            TSTY偏移.Text = "-30";
             TSTY偏移.ToolTipText = "Y偏移";
             // 
             // CaptureForm
@@ -195,6 +190,5 @@
         private ToolStripTextBox TSTY偏移;
         private ToolStripMenuItem TSM显示;
         private ToolStripMenuItem TSM显示当前捕捉;
-        private ToolStripMenuItem TSM关闭当前捕捉;
     }
 }

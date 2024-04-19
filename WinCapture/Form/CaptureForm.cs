@@ -52,7 +52,17 @@ namespace WinCapture
 
         private void TSM开始_Click(object sender, EventArgs e)
         {
-            cp.CaptureStart(hwnd);
+            if (TSM窗口设置.Checked)
+            {
+                if (int.TryParse(TSTX偏移.Text, out int x) && int.TryParse(TSTY偏移.Text, out int y))
+                {
+                    cp.CaptureStart(hwnd, 25, x, y);
+                }
+            }
+            else
+            {
+                cp.CaptureStart(hwnd);
+            }
         }
 
         private void TSM停止_Click(object sender, EventArgs e)
@@ -63,14 +73,21 @@ namespace WinCapture
 
         private void TSM显示当前捕捉_Click(object sender, EventArgs e)
         {
-            if (name.Length == 0) name.Append("Window");
-            cp.ShowCpaturedStart($"{name}", 25);
+            if (TSM显示当前捕捉.Checked)
+            {
+                cp.IsShow = false;
+            }
+            else
+            {
+                if (name.Length == 0) name.Append("Window");
+                cp.ShowCpaturedStart($"{name}", 25);
+            }
+            TSM显示当前捕捉.Checked = !TSM显示当前捕捉.Checked;
         }
 
-        private void TSM关闭当前捕捉_Click(object sender, EventArgs e)
+        private void TSM窗口设置_Click(object sender, EventArgs e)
         {
-            cp.IsShow = false;
+            TSM窗口设置.Checked = !TSM窗口设置.Checked;
         }
-
     }
 }
