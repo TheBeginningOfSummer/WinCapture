@@ -1,10 +1,13 @@
-﻿using OpenCvSharp;
+﻿using Microsoft.IO;
+using OpenCvSharp;
+using System.Diagnostics;
+using System.Threading.Channels;
 
 namespace WinCapture
 {
     public class CapturePicture
     {
-        #region 内部参数
+        #region 窗口图片捕捉参数
         //设备DeviceContent
         private IntPtr windowDc;
         //内存DeviceContent
@@ -22,9 +25,27 @@ namespace WinCapture
         #endregion
 
         public bool IsRun = false;
+        public bool IsShow = false;
+        static readonly RecyclableMemoryStreamManager streamManager = new();
+        MemoryStream? cache;
+        readonly BoundedChannelOptions boundedOptions = new(100) { FullMode = BoundedChannelFullMode.Wait };
+        public Channel<Bitmap> bitmapChannel;
+        public Channel<Stream> streamChannel;
+        public Action<Bitmap>? UpdatePicture;
+        Task? capturing;
+        Task? show;
 
-        public Action<Bitmap>? PictureUpdate;
+        public CapturePicture()
+        {
+            bitmapChannel = Channel.CreateBounded<Bitmap>(boundedOptions);
+            streamChannel = Channel.CreateBounded<Stream>(boundedOptions);
+        }
 
+        #region 图片捕获方法
+        /// <summary>
+        /// 创建设备DC
+        /// </summary>
+        /// <param name="hwnd">窗口句柄</param>
         public void CreateDC(IntPtr hwnd)
         {
             //设备上下文
@@ -32,7 +53,10 @@ namespace WinCapture
             //内存设备上下文
             memoryDc = Win32.CreateCompatibleDC(windowDc);
         }
-
+        /// <summary>
+        /// 清除设备DC
+        /// </summary>
+        /// <param name="hwnd">窗口句柄</param>
         public void ClearDC(IntPtr hwnd)
         {
             //if (bitmap.Equals(IntPtr.Zero))
@@ -95,40 +119,81 @@ namespace WinCapture
             bitmap = CreateCompatibleBitmap(memoryDc, bitmapInfo, width, height);
             //将设备图像指定到位图中
             preBitmap = Win32.SelectObject(memoryDc, bitmap);
-            return true;
-        }
-
-        public bool CaptureWindow(int width, int height)
-        {
             //将源中的位块指定到内存设备DC中
             return Win32.BitBlt(memoryDc, 0, 0, width, height, windowDc, 0, 0,
                 (uint)Win32Const.RasterOperationMode.SRCCOPY);
         }
+        #endregion
 
-        public void CaptureStart(IntPtr hwnd, bool isShow = false)
+        public static void StartTask(Task? task, Action action)
+        {
+            if (task == null)
+            {
+                task = new Task(action);
+            }
+            else
+            {
+                task.Wait();
+                task = new Task(action);
+            }
+            task.Start();
+        }
+
+        public async Task Capturing(IntPtr hwnd, int fps)
         {
             IsRun = true;
             CreateDC(hwnd);
+            bitmapChannel = Channel.CreateBounded<Bitmap>(boundedOptions);
             Win32Types.BitmapInfo bitmapInfo = new() { bmiHeader = new Win32Types.BitmapInfoHeader() };
             while (IsRun)
             {
-                if (!GetDCBitmap(hwnd, bitmapInfo)) break;
-                if (CaptureWindow(width, height))
+                if (GetDCBitmap(hwnd, bitmapInfo))
                 {
-                    int bmpDataSize = width * height * 3;
-                    //var imageArray = new byte[bmpDataSize];
-                    //Marshal.Copy(bitmap, imageArray, 0, bmpDataSize);
-                    //var image = SixLabors.ImageSharp.Image.LoadPixelData<Bgr24>(imageArray, bitmapRectangle.Width, bitmapRectangle.Height);
-                    Cv2.WaitKey(40);
-                    Bitmap image = Image.FromHbitmap(bitmap);
-                    if (isShow)
-                        Cv2.ImShow("cap", OpenCvSharp.Extensions.BitmapConverter.ToMat(image));
+                    if (fps <= 0 || fps > 1000)
+                        Thread.Sleep(40);
                     else
-                        PictureUpdate?.Invoke(image);
+                        Thread.Sleep(1000 / fps);
+                    Bitmap image = Image.FromHbitmap(bitmap);
+                    UpdatePicture?.Invoke(image);
+                    await bitmapChannel.Writer.WriteAsync(image);
+                    Win32.DeleteObject(bitmap);
                 }
+                else break;
+            }
+            bitmapChannel.Writer.Complete();
+            ClearDC(hwnd);
+            Cv2.DestroyAllWindows();
+        }
+
+        public async Task ShowCpatured(string windowName, int delay = 20)
+        {
+            IsShow = true;
+            while (await bitmapChannel.Reader.WaitToReadAsync())
+            {
+                if (bitmapChannel.Reader.TryRead(out var image))
+                {
+                    Cv2.WaitKey(delay);
+                    Mat mat = OpenCvSharp.Extensions.BitmapConverter.ToMat(image);
+                    Cv2.ImShow(windowName, mat);
+                    image.Dispose();
+                    mat.Release();
+                    Debug.WriteLine(bitmapChannel.Reader.Count);
+                }
+                if (!IsShow) break;
             }
             Cv2.DestroyAllWindows();
-            ClearDC(hwnd);
+        }
+
+        public void CaptureStart(IntPtr hwnd, int fps = 25)
+        {
+            IsRun = false;
+            StartTask(capturing, async () => await Capturing(hwnd, fps));
+        }
+
+        public void ShowCpaturedStart(string windowName, int delay = 20)
+        {
+            IsShow = false;
+            StartTask(show, async () => await ShowCpatured(windowName, delay));
         }
 
     }

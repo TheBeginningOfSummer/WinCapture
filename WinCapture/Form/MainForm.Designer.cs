@@ -28,25 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            PB图片 = new PictureBox();
             MS菜单 = new MenuStrip();
             TSM添加 = new ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)PB图片).BeginInit();
+            TSM窗口 = new ToolStripMenuItem();
+            TSM水平 = new ToolStripMenuItem();
+            TSM垂直 = new ToolStripMenuItem();
+            TSM层叠 = new ToolStripMenuItem();
+            TSM全部关闭 = new ToolStripMenuItem();
             MS菜单.SuspendLayout();
             SuspendLayout();
             // 
-            // PB图片
-            // 
-            PB图片.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            PB图片.Location = new Point(12, 27);
-            PB图片.Name = "PB图片";
-            PB图片.Size = new Size(760, 402);
-            PB图片.TabIndex = 4;
-            PB图片.TabStop = false;
-            // 
             // MS菜单
             // 
-            MS菜单.Items.AddRange(new ToolStripItem[] { TSM添加 });
+            MS菜单.Items.AddRange(new ToolStripItem[] { TSM添加, TSM窗口, TSM全部关闭 });
             MS菜单.Location = new Point(0, 0);
             MS菜单.Name = "MS菜单";
             MS菜单.Size = new Size(784, 25);
@@ -60,18 +54,52 @@
             TSM添加.Text = "添加";
             TSM添加.Click += TSM添加_Click;
             // 
+            // TSM窗口
+            // 
+            TSM窗口.DropDownItems.AddRange(new ToolStripItem[] { TSM水平, TSM垂直, TSM层叠 });
+            TSM窗口.Name = "TSM窗口";
+            TSM窗口.Size = new Size(44, 21);
+            TSM窗口.Text = "窗口";
+            // 
+            // TSM水平
+            // 
+            TSM水平.Name = "TSM水平";
+            TSM水平.Size = new Size(100, 22);
+            TSM水平.Text = "水平";
+            TSM水平.Click += TSM水平_Click;
+            // 
+            // TSM垂直
+            // 
+            TSM垂直.Name = "TSM垂直";
+            TSM垂直.Size = new Size(100, 22);
+            TSM垂直.Text = "垂直";
+            TSM垂直.Click += TSM垂直_Click;
+            // 
+            // TSM层叠
+            // 
+            TSM层叠.Name = "TSM层叠";
+            TSM层叠.Size = new Size(100, 22);
+            TSM层叠.Text = "层叠";
+            TSM层叠.Click += TSM层叠_Click;
+            // 
+            // TSM全部关闭
+            // 
+            TSM全部关闭.Name = "TSM全部关闭";
+            TSM全部关闭.Size = new Size(68, 21);
+            TSM全部关闭.Text = "全部关闭";
+            TSM全部关闭.Click += TSM全部关闭_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 441);
-            Controls.Add(PB图片);
             Controls.Add(MS菜单);
+            IsMdiContainer = true;
             MainMenuStrip = MS菜单;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "WinCapture";
-            ((System.ComponentModel.ISupportInitialize)PB图片).EndInit();
             MS菜单.ResumeLayout(false);
             MS菜单.PerformLayout();
             ResumeLayout(false);
@@ -79,8 +107,12 @@
         }
 
         #endregion
-        private PictureBox PB图片;
         private MenuStrip MS菜单;
         private ToolStripMenuItem TSM添加;
+        private ToolStripMenuItem TSM窗口;
+        private ToolStripMenuItem TSM水平;
+        private ToolStripMenuItem TSM垂直;
+        private ToolStripMenuItem TSM层叠;
+        private ToolStripMenuItem TSM全部关闭;
     }
 }

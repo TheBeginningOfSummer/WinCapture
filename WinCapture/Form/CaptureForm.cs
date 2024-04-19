@@ -6,7 +6,7 @@ namespace WinCapture
     {
         private bool isMouseDown = false;
         private int hwnd = 0;
-        private StringBuilder name = new(256);
+        private readonly StringBuilder name = new(256);
 
         readonly CapturePicture cp = new();
 
@@ -25,11 +25,11 @@ namespace WinCapture
         {
             if (isMouseDown)
             {
-                Win32.GetCursorPos(out Point pos);
+                Win32.GetCursorPos(out System.Drawing.Point pos);
                 hwnd = Win32.WindowFromPoint(pos);
                 Win32.GetWindowText(hwnd, name, 256);
                 LB句柄.Text = $"句柄 {hwnd}";
-                LB标题.Text = $"标题 {name}";
+                Text = $"{name}";
             }
         }
 
@@ -44,20 +44,33 @@ namespace WinCapture
             Clipboard.SetText(hwnd.ToString());
         }
 
-        private void BTN开始_Click(object sender, EventArgs e)
-        {
-            cp.IsRun = false; Thread.Sleep(200);
-            Task.Run(() => cp.CaptureStart(hwnd, true));
-        }
-
-        private void BTN停止_Click(object sender, EventArgs e)
-        {
-            cp.IsRun = false;
-        }
-
         private void CaptureForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             cp.IsRun = false;
+            cp.IsShow = false;
         }
+
+        private void TSM开始_Click(object sender, EventArgs e)
+        {
+            cp.CaptureStart(hwnd);
+        }
+
+        private void TSM停止_Click(object sender, EventArgs e)
+        {
+            cp.IsRun = false;
+            cp.IsShow = false;
+        }
+
+        private void TSM显示当前捕捉_Click(object sender, EventArgs e)
+        {
+            if (name.Length == 0) name.Append("Window");
+            cp.ShowCpaturedStart($"{name}", 25);
+        }
+
+        private void TSM关闭当前捕捉_Click(object sender, EventArgs e)
+        {
+            cp.IsShow = false;
+        }
+
     }
 }
